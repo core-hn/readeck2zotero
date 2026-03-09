@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Readeck Import</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 16px; }
+    .row { margin-bottom: 16px; }
+    label { display: block; font-weight: bold; margin-bottom: 4px; }
+    input[type="text"], input[type="password"] {
+      width: 100%; max-width: 480px;
+      padding: 6px 8px; box-sizing: border-box;
+      border: 1px solid #ccc; border-radius: 4px;
+      font-size: 13px;
+    }
+    .hint { font-size: 11px; color: #888; margin-top: 3px; }
+    .section-title {
+      font-size: 15px; font-weight: bold;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 6px; margin-bottom: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="section-title">Connexion au serveur Readeck</div>
+
+  <div class="row">
+    <label for="pref-server-url">URL du serveur</label>
+    <input id="pref-server-url" type="text"
+           placeholder="https://readeck.example.com"
+           data-pref="extensions.readeck-import.serverUrl"/>
+    <div class="hint">Sans slash final. Ex : https://readeck.abbadie.ovh</div>
+  </div>
+
+  <div class="row">
+    <label for="pref-api-token">Token API</label>
+    <input id="pref-api-token" type="password"
+           placeholder="Ton token Readeck"
+           data-pref="extensions.readeck-import.apiToken"/>
+    <div class="hint">Profil → Tokens API dans l'interface Readeck</div>
+  </div>
+
+  <script>
+    // Charge et sauvegarde les prefs via Zotero.Prefs
+    document.querySelectorAll("[data-pref]").forEach(function(el) {
+      var key = el.dataset.pref;
+      try { el.value = Zotero.Prefs.get(key, true) || ""; } catch(e) {}
+      el.addEventListener("input", function() {
+        try { Zotero.Prefs.set(key, el.value.trim(), true); } catch(e) {}
+      });
+    });
+  </script>
+</body>
+</html>

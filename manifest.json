@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+  "name": "Readeck2Zotero",
+  "version": "0.2.4",
+  "description": "Importe les annotations Readeck dans Zotero",
+  "author": "readeck-import",
+  "icons": {
+    "48": "readeck.svg",
+    "96": "readeck.svg"
+  },
+  "applications": {
+    "zotero": {
+      "id": "readeck-import@zotero-plugin",
+      "update_url": "https://raw.githubusercontent.com/core-hn/readeck2zotero/main/update.json",
+      "strict_min_version": "6.999",
+      "strict_max_version": "8.*"
+    }
+  }
+}
