@@ -2,7 +2,7 @@
 
 [![Zotero](https://img.shields.io/badge/Zotero-8.0.4-red)](#compatibility)
 [![Readeck](https://img.shields.io/badge/Readeck-0.22.2-blue)](#compatibility)
-[![Release](https://img.shields.io/github/v/release/core-hn/Readeck2Zotero?display_name=tag)](../../releases)
+[![Release](https://img.shields.io/github/v/release/core-hn/readeck2zotero?display_name=tag)](../../releases)
 [![License](https://img.shields.io/github/license/core-hn/Readeck2Zotero)](./LICENSE)
 
 Import highlights and annotations from **Readeck** into **Zotero**.
