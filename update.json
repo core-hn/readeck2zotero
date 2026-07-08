@@ -3,8 +3,8 @@
     "readeck-import@zotero-plugin": {
       "updates": [
         {
-          "version": "0.2.4",
-          "update_link": "https://github.com/core-hn/readeck2zotero/releases/download/v0.2.4/readeck2zotero.xpi",
+          "version": "0.2.5",
+          "update_link": "https://github.com/core-hn/readeck2zotero/releases/download/v0.2.5/readeck2zotero.xpi",
           "applications": {
             "zotero": {
               "strict_min_version": "6.999",
