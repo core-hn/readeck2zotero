@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Extraire la version du tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Vérifier la cohérence avec manifest.json
+        run: |
+          MANIFEST_VERSION=$(jq -r .version manifest.json)
+          if [ "$MANIFEST_VERSION" != "${{ steps.version.outputs.version }}" ]; then
+            echo "::error::La version du manifest.json ($MANIFEST_VERSION) ne correspond pas au tag (${{ steps.version.outputs.version }}). Mets à jour manifest.json avant de taguer."
+            exit 1
+          fi
+
+      - name: Construire le .xpi
+        run: zip -X -j readeck2zotero.xpi manifest.json bootstrap.js prefs.js prefs.xhtml readeck.svg
+
+      - name: Mettre à jour update.json
+        run: |
+          MIN=$(jq -r .applications.zotero.strict_min_version manifest.json)
+          MAX=$(jq -r .applications.zotero.strict_max_version manifest.json)
+          jq --arg v "${{ steps.version.outputs.version }}" \
+             --arg link "https://github.com/core-hn/readeck2zotero/releases/download/${{ steps.version.outputs.tag }}/readeck2zotero.xpi" \
+             --arg min "$MIN" --arg max "$MAX" \
+             '.addons["readeck-import@zotero-plugin"].updates = [{
+                version: $v,
+                update_link: $link,
+                applications: { zotero: { strict_min_version: $min, strict_max_version: $max } }
+              }]' update.json > update.json.tmp
+          mv update.json.tmp update.json
+
+      - name: Committer update.json sur main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add update.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: mettre à jour update.json pour ${{ steps.version.outputs.tag }}"
+            git push origin HEAD:main
+          fi
+
+      - name: Créer la release GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: "Readeck2Zotero ${{ steps.version.outputs.tag }}"
+          files: readeck2zotero.xpi
+          generate_release_notes: true
